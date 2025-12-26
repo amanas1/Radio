@@ -1,62 +1,54 @@
-/* ===============================
-   PLAYER — FINAL FIX (NO GLASS)
-   =============================== */
+/* === PLAYER BAR FIX (как в Google AI Studio) === */
 
 .player-bar,
 .audio-player,
-.player,
 footer {
   position: fixed !important;
   left: 16px !important;
   right: 16px !important;
   bottom: 16px !important;
-  z-index: 9999 !important;
+  z-index: 99999 !important;
 
-  background-color: #0f172a !important;
-  opacity: 1 !important;
-
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-
-  border: 1px solid rgba(255,255,255,0.2) !important;
-  border-radius: 20px !important;
+  background: #0f172a !important;
+  border: 1px solid rgba(255,255,255,0.18) !important;
+  border-radius: 18px !important;
 
   box-shadow:
-    0 12px 35px rgba(0,0,0,0.7),
+    0 12px 30px rgba(0,0,0,0.7),
     inset 0 1px 0 rgba(255,255,255,0.06) !important;
+
+  backdrop-filter: none !important;
 }
 
-/* кнопки */
+/* Кнопки */
 .player-bar button,
-.audio-player button,
-.player button {
+.audio-player button {
   background: #ffffff !important;
   color: #000000 !important;
   border-radius: 999px !important;
+  opacity: 1 !important;
 }
 
-/* play / pause */
+/* Play / Pause иконки */
 .player-bar svg,
-.audio-player svg,
-.player svg {
+.audio-player svg {
   fill: #000000 !important;
   stroke: #000000 !important;
 }
 
-/* текст */
+/* Текст */
 .player-bar *,
-.audio-player *,
-.player * {
+.audio-player * {
   color: #ffffff !important;
   opacity: 1 !important;
 }
 
-/* громкость */
+/* Громкость */
 input[type="range"] {
   accent-color: #bc6ff1 !important;
 }
 
-/* чтобы контент не перекрывался */
+/* Контент не перекрывается */
 body {
   padding-bottom: 160px !important;
 }
