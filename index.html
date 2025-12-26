@@ -1,16 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <!-- Basic -->
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
     <title>StreamFlow</title>
 
-    <!-- PWA -->
+    <!-- =========================
+         PWA
+    ========================== -->
     <link rel="manifest" href="/manifest.json" />
     <meta name="theme-color" content="#6c63ff" />
 
-    <!-- Fonts & API -->
+    <!-- =========================
+         Fonts & API
+    ========================== -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="preconnect" href="https://de1.api.radio-browser.info" />
@@ -19,7 +23,9 @@
       rel="stylesheet"
     />
 
-    <!-- Tailwind -->
+    <!-- =========================
+         Tailwind CDN
+    ========================== -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
@@ -37,7 +43,9 @@
       };
     </script>
 
-    <!-- Base styles -->
+    <!-- =========================
+         Base styles
+    ========================== -->
     <style>
       :root {
         --color-primary: #bc6ff1;
@@ -46,8 +54,10 @@
         --text-base: #f8fafc;
       }
 
+      html,
       body {
         margin: 0;
+        padding: 0;
         background-color: var(--base-bg);
         color: var(--text-base);
         font-family: 'Plus Jakarta Sans', sans-serif;
@@ -55,27 +65,33 @@
       }
     </style>
 
-    <!-- React import map -->
+    <!-- =========================
+         React Import Map
+    ========================== -->
     <script type="importmap">
       {
         "imports": {
-          "react": "https://esm.sh/react@^19.2.3",
-          "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
-          "react/": "https://esm.sh/react@^19.2.3/"
+          "react": "https://esm.sh/react@19.2.3",
+          "react-dom/": "https://esm.sh/react-dom@19.2.3/",
+          "react/": "https://esm.sh/react@19.2.3/"
         }
       }
     </script>
 
+    <!-- App styles -->
     <link rel="stylesheet" href="/index.css" />
   </head>
 
   <body>
+    <!-- React root -->
     <div id="root"></div>
 
     <!-- App entry -->
     <script type="module" src="/index.tsx"></script>
 
-    <!-- Service Worker -->
+    <!-- =========================
+         Service Worker
+    ========================== -->
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
