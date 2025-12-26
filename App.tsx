@@ -1,102 +1,37 @@
-// App.tsx
-import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
-import {
-  RadioStation, CategoryInfo, ViewMode, ThemeName,
-  BaseTheme, Language, UserProfile, VisualizerVariant, VisualizerSettings
-} from './types';
-import { GENRES, ERAS, MOODS, DEFAULT_VOLUME, TRANSLATIONS } from './constants';
-import { fetchStationsByTag, fetchStationsByUuids } from './services/radioService';
+// App.tsx — FINAL FIX (Google AI Studio layout)
 
-import AudioVisualizer from './components/AudioVisualizer';
-import DancingAvatar from './components/DancingAvatar';
-import ToolsPanel from './components/ToolsPanel';
-import ChatPanel from './components/ChatPanel';
-import ManualModal from './components/ManualModal';
-import TutorialOverlay from './components/TutorialOverlay';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { RadioStation } from './types';
+import { GENRES, DEFAULT_VOLUME } from './constants';
+import { fetchStationsByTag } from './services/radioService';
 
 import {
-  PauseIcon, VolumeIcon, LoadingIcon, MusicNoteIcon,
-  HeartIcon, MenuIcon, AdjustmentsIcon, PlayIcon,
-  ChatBubbleIcon, NextIcon, PreviousIcon, MaximizeIcon,
-  XMarkIcon, PlusIcon
+  PlayIcon,
+  PauseIcon,
+  NextIcon,
+  PreviousIcon,
+  VolumeIcon,
 } from './components/Icons';
-
-/* ===========================
-   CONFIG
-=========================== */
-
-const THEME_COLORS: Record<ThemeName, { primary: string; secondary: string }> = {
-  default: { primary: '#bc6ff1', secondary: '#f038ff' },
-  emerald: { primary: '#00ff9f', secondary: '#00b8ff' },
-  midnight: { primary: '#4d4dff', secondary: '#a64dff' },
-  cyber: { primary: '#ff00ff', secondary: '#00ffff' },
-  volcano: { primary: '#ff3c00', secondary: '#ffcc00' },
-  ocean: { primary: '#00d2ff', secondary: '#3a7bd5' },
-  sakura: { primary: '#ff758c', secondary: '#ff7eb3' },
-  gold: { primary: '#ffcc33', secondary: '#cc9900' },
-  frost: { primary: '#74ebd5', secondary: '#acb6e5' },
-  forest: { primary: '#a8ff78', secondary: '#78ffd6' },
-};
-
-const DEFAULT_VIZ_SETTINGS: VisualizerSettings = {
-  scaleX: 1,
-  scaleY: 1,
-  brightness: 100,
-  contrast: 100,
-  saturation: 100,
-  hue: 0,
-  opacity: 1,
-  speed: 1,
-  autoIdle: true,
-  performanceMode: true
-};
-
-const INITIAL_CHUNK = 5;
-const PAGE_SIZE = 10;
-const MAX_STATIONS = 50;
-
-/* ===========================
-   COMPONENT
-=========================== */
 
 export default function App() {
   const [stations, setStations] = useState<RadioStation[]>([]);
   const [currentStation, setCurrentStation] = useState<RadioStation | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [isBuffering, setIsBuffering] = useState(false);
   const [volume, setVolume] = useState(DEFAULT_VOLUME);
-  const [visibleCount, setVisibleCount] = useState(INITIAL_CHUNK);
 
   const audioRef = useRef<HTMLAudioElement>(null);
-  const audioCtxRef = useRef<AudioContext | null>(null);
-  const analyserRef = useRef<AnalyserNode | null>(null);
 
-  /* ===== INIT AUDIO ===== */
-  const initAudio = () => {
-    if (audioCtxRef.current) return;
-    const ctx = new AudioContext();
-    audioCtxRef.current = ctx;
-    const analyser = ctx.createAnalyser();
-    analyser.fftSize = 2048;
-    analyserRef.current = analyser;
-    if (audioRef.current) {
-      const src = ctx.createMediaElementSource(audioRef.current);
-      src.connect(analyser);
-      analyser.connect(ctx.destination);
-    }
-  };
+  useEffect(() => {
+    fetchStationsByTag(GENRES[0].id, 20).then(setStations);
+  }, []);
 
-  const playStation = (s: RadioStation) => {
-    initAudio();
-    setCurrentStation(s);
-    setIsBuffering(true);
+  const playStation = useCallback((station: RadioStation) => {
+    if (!audioRef.current) return;
+    audioRef.current.src = station.url_resolved;
+    audioRef.current.play().catch(() => {});
+    setCurrentStation(station);
     setIsPlaying(true);
-    if (audioRef.current) {
-      audioRef.current.src = s.url_resolved;
-      audioRef.current.crossOrigin = 'anonymous';
-      audioRef.current.play().catch(() => {});
-    }
-  };
+  }, []);
 
   const togglePlay = () => {
     if (!audioRef.current) return;
@@ -104,86 +39,71 @@ export default function App() {
     else audioRef.current.play().catch(() => {});
   };
 
-  useEffect(() => {
-    fetchStationsByTag('jazz', MAX_STATIONS).then(setStations);
-  }, []);
+  const next = () => {
+    if (!currentStation || !stations.length) return;
+    const i = stations.findIndex(s => s.stationuuid === currentStation.stationuuid);
+    playStation(stations[(i + 1) % stations.length]);
+  };
 
-  /* ===========================
-     RENDER
-  =========================== */
+  const prev = () => {
+    if (!currentStation || !stations.length) return;
+    const i = stations.findIndex(s => s.stationuuid === currentStation.stationuuid);
+    playStation(stations[(i - 1 + stations.length) % stations.length]);
+  };
 
   return (
-    <div className="relative h-screen bg-slate-950 text-white overflow-hidden">
-
+    <div className="relative min-h-screen bg-[#070b14] text-white">
       <audio
         ref={audioRef}
-        onPlaying={() => { setIsBuffering(false); setIsPlaying(true); }}
+        onPlay={() => setIsPlaying(true)}
         onPause={() => setIsPlaying(false)}
-        onWaiting={() => setIsBuffering(true)}
       />
 
-      {/* ===== MAIN ===== */}
-      <main className="h-full overflow-y-auto pb-40 px-6">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-5 mt-10">
-          {stations.slice(0, visibleCount).map(s => (
+      {/* MAIN CONTENT */}
+      <main className="px-10 py-8 pb-40">
+        <h1 className="text-3xl font-black mb-8">StreamFlow</h1>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-4 gap-6">
+          {stations.map(station => (
             <div
-              key={s.stationuuid}
-              onClick={() => playStation(s)}
-              className="cursor-pointer p-5 rounded-2xl border border-white/10 bg-white/5 hover:border-white/30 transition"
+              key={station.stationuuid}
+              onClick={() => playStation(station)}
+              className="p-6 rounded-2xl bg-white/5 hover:bg-white/10 cursor-pointer transition"
             >
-              <div className="font-bold text-sm truncate">{s.name}</div>
-              <div className="text-xs opacity-50">{s.codec} · {s.bitrate}k</div>
+              <h3 className="font-bold truncate">{station.name}</h3>
+              <p className="text-xs opacity-60 mt-1">
+                {station.codec || 'MP3'} • {station.bitrate || 128}K
+              </p>
             </div>
           ))}
         </div>
-
-        {visibleCount < stations.length && (
-          <div className="flex justify-center mt-10">
-            <button
-              onClick={() => setVisibleCount(v => v + PAGE_SIZE)}
-              className="px-8 py-4 rounded-xl bg-white/10 hover:bg-white/20 transition"
-            >
-              Load more
-            </button>
-          </div>
-        )}
       </main>
 
-      {/* ===========================
-          🎧 PLAYER (FIXED)
-      =========================== */}
-      <div className="fixed bottom-6 left-1/2 -translate-x-1/2 w-full max-w-5xl px-6 z-50">
-        <div className="
-          flex items-center justify-between
-          bg-slate-900
-          border border-white/20
-          rounded-2xl
-          px-6 py-4
-          shadow-[0_20px_50px_rgba(0,0,0,0.8)]
-        ">
-          <div className="flex items-center gap-4 min-w-0">
-            <DancingAvatar isPlaying={isPlaying && !isBuffering} className="w-10 h-10" />
-            <div className="min-w-0">
-              <div className="font-bold truncate">
-                {currentStation?.name || 'Radio Stream'}
-              </div>
-              <div className="text-xs text-purple-400 font-bold">
-                {isBuffering ? 'BUFFERING…' : 'LIVE'}
-              </div>
-            </div>
+      {/* PLAYER BAR — ВНЕ MAIN (КЛЮЧЕВО) */}
+      <div className="fixed bottom-4 left-1/2 -translate-x-1/2 w-[95%] max-w-4xl z-[9999]">
+        <div className="bg-[#0f172a] border border-white/10 rounded-2xl px-6 py-4 flex items-center gap-6 shadow-2xl">
+          <div className="flex-1 min-w-0">
+            <p className="font-bold truncate">
+              {currentStation?.name || 'Select a station'}
+            </p>
+            <p className="text-xs text-primary font-black">
+              {isPlaying ? 'LIVE' : 'PAUSED'}
+            </p>
           </div>
 
-          <div className="flex items-center gap-4">
-            <button onClick={togglePlay}
-              className="w-12 h-12 rounded-full bg-white text-black flex items-center justify-center shadow-lg hover:scale-105 active:scale-95 transition">
-              {isBuffering ? <LoadingIcon className="w-5 h-5 animate-spin" />
-                : isPlaying ? <PauseIcon className="w-5 h-5" />
-                  : <PlayIcon className="w-5 h-5 ml-0.5" />}
-            </button>
-          </div>
+          <button onClick={prev}><PreviousIcon className="w-6 h-6" /></button>
 
-          <div className="hidden md:flex items-center gap-3">
-            <VolumeIcon className="w-5 h-5 opacity-60" />
+          <button
+            onClick={togglePlay}
+            className="w-12 h-12 bg-white text-black rounded-full flex items-center justify-center"
+          >
+            {isPlaying ? <PauseIcon /> : <PlayIcon />}
+          </button>
+
+          <button onClick={next}><NextIcon className="w-6 h-6" /></button>
+
+          <div className="flex items-center gap-2">
+            <VolumeIcon className="w-5 h-5" />
             <input
               type="range"
               min="0"
@@ -191,16 +111,14 @@ export default function App() {
               step="0.01"
               value={volume}
               onChange={e => {
-                const v = parseFloat(e.target.value);
+                const v = Number(e.target.value);
                 setVolume(v);
                 if (audioRef.current) audioRef.current.volume = v;
               }}
-              className="w-24 accent-purple-500"
             />
           </div>
         </div>
       </div>
-
     </div>
   );
 }
