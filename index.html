@@ -1,93 +1,57 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>StreamFlow</title>
-
-    <!-- PWA -->
-    <link rel="manifest" href="/manifest.json" />
-    <meta name="theme-color" content="#6c63ff" />
-
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
-      rel="stylesheet"
-    />
-
-    <!-- Tailwind -->
-    <script src="https://cdn.tailwindcss.com"></script>
-
-    <!-- ✅ SAFE PLAYER FIX -->
     <style>
-      body {
-        margin: 0;
-        background: #070b14;
-        color: #f8fafc;
-        font-family: 'Plus Jakarta Sans', sans-serif;
-      }
+/* ===== FIX PLAYER BAR (как в Google AI Studio) ===== */
 
-      /* PLAYER FIX */
-      .player-bar,
-      .audio-player,
-      footer {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        z-index: 9999;
-        background: #0b1020 !important;
-        border-top: 1px solid rgba(255,255,255,0.15);
-      }
+.player-bar,
+.audio-player,
+footer {
+  position: fixed;
+  left: 16px;
+  right: 16px;
+  bottom: 16px;
+  z-index: 9999;
 
-      .player-bar button,
-      .audio-player button {
-        background: #bc6ff1 !important;
-        color: #fff !important;
-        border-radius: 9999px;
-      }
+  background: #0f172a !important; /* НЕ прозрачный */
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 20px;
 
-      .player-bar svg,
-      .audio-player svg {
-        fill: #ffffff !important;
-        stroke: #ffffff !important;
-      }
+  box-shadow:
+    0 10px 30px rgba(0,0,0,0.6),
+    inset 0 1px 0 rgba(255,255,255,0.05);
 
-      input[type="range"] {
-        accent-color: #bc6ff1;
-      }
+  backdrop-filter: none !important;
+}
 
-      body {
-        padding-bottom: 120px;
-      }
-    </style>
+/* кнопки */
+.player-bar button,
+.audio-player button {
+  background: #ffffff !important;
+  color: #000000 !important;
+  border-radius: 999px;
+}
 
-    <!-- React import map -->
-    <script type="importmap">
-      {
-        "imports": {
-          "react": "https://esm.sh/react@19",
-          "react-dom/": "https://esm.sh/react-dom@19/",
-          "react/": "https://esm.sh/react@19/"
-        }
-      }
-    </script>
-  </head>
+/* иконки play / pause */
+.player-bar svg,
+.audio-player svg {
+  fill: #000000 !important;
+  stroke: #000000 !important;
+}
 
-  <body>
-    <div id="root"></div>
+/* текст в плеере */
+.player-bar *,
+.audio-player * {
+  color: #ffffff !important;
+}
 
-    <script type="module" src="/index.tsx"></script>
+/* громкость */
+input[type="range"] {
+  accent-color: #bc6ff1;
+}
 
-    <!-- Service Worker -->
-    <script>
-      if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-          navigator.serviceWorker.register('/sw.js');
-        });
-      }
-    </script>
-  </body>
-</html>
+/* чтобы контент не перекрывался */
+body {
+  padding-bottom: 140px;
+}
+</style>
