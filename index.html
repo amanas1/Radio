@@ -1,57 +1,133 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>StreamFlow</title>
+
+    <!-- PWA -->
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#6c63ff" />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            },
+            colors: {
+              primary: '#bc6ff1',
+              secondary: '#ff007c',
+            },
+          },
+        },
+      };
+    </script>
+
+    <!-- BASE THEME -->
     <style>
-/* ===== FIX PLAYER BAR (как в Google AI Studio) ===== */
+      :root {
+        --base-bg: #070b14;
+        --text-base: #f8fafc;
+      }
 
-.player-bar,
-.audio-player,
-footer {
-  position: fixed;
-  left: 16px;
-  right: 16px;
-  bottom: 16px;
-  z-index: 9999;
+      body {
+        margin: 0;
+        background-color: var(--base-bg);
+        color: var(--text-base);
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        -webkit-font-smoothing: antialiased;
+      }
+    </style>
 
-  background: #0f172a !important; /* НЕ прозрачный */
-  border: 1px solid rgba(255,255,255,0.15);
-  border-radius: 20px;
+    <!-- ===== FIX PLAYER BAR (как в Google AI Studio) ===== -->
+    <style>
+      .player-bar,
+      .audio-player,
+      footer {
+        position: fixed;
+        left: 16px;
+        right: 16px;
+        bottom: 16px;
+        z-index: 9999;
 
-  box-shadow:
-    0 10px 30px rgba(0,0,0,0.6),
-    inset 0 1px 0 rgba(255,255,255,0.05);
+        background: #0f172a !important;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 20px;
 
-  backdrop-filter: none !important;
-}
+        box-shadow:
+          0 10px 30px rgba(0, 0, 0, 0.6),
+          inset 0 1px 0 rgba(255, 255, 255, 0.05);
 
-/* кнопки */
-.player-bar button,
-.audio-player button {
-  background: #ffffff !important;
-  color: #000000 !important;
-  border-radius: 999px;
-}
+        backdrop-filter: none !important;
+      }
 
-/* иконки play / pause */
-.player-bar svg,
-.audio-player svg {
-  fill: #000000 !important;
-  stroke: #000000 !important;
-}
+      .player-bar button,
+      .audio-player button {
+        background: #ffffff !important;
+        color: #000000 !important;
+        border-radius: 999px;
+      }
 
-/* текст в плеере */
-.player-bar *,
-.audio-player * {
-  color: #ffffff !important;
-}
+      .player-bar svg,
+      .audio-player svg {
+        fill: #000000 !important;
+        stroke: #000000 !important;
+      }
 
-/* громкость */
-input[type="range"] {
-  accent-color: #bc6ff1;
-}
+      .player-bar *,
+      .audio-player * {
+        color: #ffffff !important;
+      }
 
-/* чтобы контент не перекрывался */
-body {
-  padding-bottom: 140px;
-}
-</style>
+      input[type="range"] {
+        accent-color: #bc6ff1;
+      }
+
+      body {
+        padding-bottom: 140px;
+      }
+    </style>
+
+    <!-- React import map -->
+    <script type="importmap">
+      {
+        "imports": {
+          "react": "https://esm.sh/react@^19.2.3",
+          "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+          "react/": "https://esm.sh/react@^19.2.3/"
+        }
+      }
+    </script>
+
+    <link rel="stylesheet" href="/index.css" />
+  </head>
+
+  <body>
+    <div id="root"></div>
+
+    <!-- App entry -->
+    <script type="module" src="/index.tsx"></script>
+
+    <!-- Service Worker -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js');
+        });
+      }
+    </script>
+  </body>
+</html>
